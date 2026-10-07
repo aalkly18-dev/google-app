@@ -23,9 +23,21 @@ jobs:
             chmod +x gradlew
             ./gradlew assembleDebug
           else
-            echo "Gradle wrapper not in root, searching..."
-            find . -name "gradlew"
+            echo "Searching for gradlew..."
+            find . -name "gradlew" -exec chmod +x {} \;
+            # إذا كان Gradle موجوداً في مسار فرعي
+            gradle_path=$(find . -name "gradlew" -quit)
+            if [ -n "$gradle_path" ]; then
+              dir_path=$(dirname "$gradle_path")
+              cd "$dir_path" && ./gradlew assembleDebug
+            fi
           fi
+
+      - name: Upload APK Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: uranium-agent-debug
+          path: '**/outputs/apk/debug/*.apk'
 
       - name: Trigger Render Webhook
         if: env.RENDER_DEPLOY_URL != ''
