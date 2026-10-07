@@ -19,24 +19,24 @@ jobs:
 
       - name: Build Android App (Debug)
         run: |
-          if [ -f "./gradlew" ]; then
+          # البحث عن مكان ملف gradlew وتنفيذ البناء في مجلده مباشرة
+          gradle_file=$(find . -name "gradlew" -quit)
+          if [ -n "$gradle_file" ]; then
+            proj_dir=$(dirname "$gradle_file")
+            echo "Found project directory at: $proj_dir"
+            cd "$proj_dir"
             chmod +x gradlew
             ./gradlew assembleDebug
           else
-            echo "Searching for gradlew..."
-            find . -name "gradlew" -exec chmod +x {} \;
-            gradle_path=$(find . -name "gradlew" -quit)
-            if [ -n "$gradle_path" ]; then
-              dir_path=$(dirname "$gradle_path")
-              cd "$dir_path" && ./gradlew assembleDebug
-            fi
+            echo "Error: gradlew not found!"
+            exit 1
           fi
 
       - name: Upload APK Artifact
         uses: actions/upload-artifact@v4
         with:
           name: uranium-agent-debug
-          path: '**/outputs/apk/debug/*.apk'
+          path: '**/build/outputs/apk/debug/*.apk'
 
       - name: Trigger Render Webhook
         if: env.RENDER_DEPLOY_URL != ''
