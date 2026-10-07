@@ -25,7 +25,6 @@ jobs:
           else
             echo "Searching for gradlew..."
             find . -name "gradlew" -exec chmod +x {} \;
-            # إذا كان Gradle موجوداً في مسار فرعي
             gradle_path=$(find . -name "gradlew" -quit)
             if [ -n "$gradle_path" ]; then
               dir_path=$(dirname "$gradle_path")
@@ -34,7 +33,7 @@ jobs:
           fi
 
       - name: Upload APK Artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: uranium-agent-debug
           path: '**/outputs/apk/debug/*.apk'
