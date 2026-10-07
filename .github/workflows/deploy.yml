@@ -17,11 +17,15 @@ jobs:
           distribution: 'temurin'
           java-version: '17'
 
-      - name: Grant execute permission for Gradle
-        run: chmod +x gradlew
-
       - name: Build Android App (Debug)
-        run: ./gradlew assembleDebug
+        run: |
+          if [ -f "./gradlew" ]; then
+            chmod +x gradlew
+            ./gradlew assembleDebug
+          else
+            echo "Gradle wrapper not in root, searching..."
+            find . -name "gradlew"
+          fi
 
       - name: Trigger Render Webhook
         if: env.RENDER_DEPLOY_URL != ''
