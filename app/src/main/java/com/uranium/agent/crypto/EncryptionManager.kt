@@ -1,5 +1,6 @@
 package com.uranium.agent.crypto
 
-class EncryptionManager {
-    // إدارة عمليات التشفير وفك التشفير
+object EncryptionManager {
+    fun encrypt(data: ByteArray): ByteArray = data
+    fun decrypt(data: ByteArray): ByteArray = data
 }
